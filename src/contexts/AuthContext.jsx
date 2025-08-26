@@ -71,13 +71,39 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     setUser(null);
   };
-
+const socialLogin = async (provider, accessToken = null) => {
+  try {
+    let response;
+    
+    if (accessToken) {
+      // If we have an access token (from Firebase), use it
+      response = await authAPI.socialLogin({ provider, accessToken });
+    } else {
+      // For direct OAuth flow (will redirect)
+      window.location.href = `${API_BASE_URL}/auth/${provider}`;
+      return { success: true, redirect: true };
+    }
+    
+    const { token, user: userData } = response.data;
+    localStorage.setItem('token', token);
+    setUser(userData);
+    
+    return { success: true, user: userData };
+  } catch (error) {
+    console.error(`${provider} login error:`, error);
+    return { 
+      success: false, 
+      message: error.response?.data?.message || `Failed to login with ${provider}` 
+    };
+  }
+};
   const value = {
     user,
     login,
     register,
     logout,
-    loading
+    loading,
+    socialLogin 
   };
 
   return (

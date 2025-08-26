@@ -1,8 +1,7 @@
 // services/api.js
 import axios from "axios";
 
-const API_BASE_URL =
-  process.env.REACT_APP_API_URL;
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 console.log("API Base URL:", API_BASE_URL);
 
@@ -55,6 +54,7 @@ export const authAPI = {
     console.log("GetMe API call");
     return api.get("/auth/me");
   },
+  socialLogin: (data) => api.post("/auth/social", data),
 };
 
 export const metricsAPI = {
